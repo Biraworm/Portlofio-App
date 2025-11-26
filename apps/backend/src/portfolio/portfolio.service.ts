@@ -28,30 +28,59 @@ export class PortfolioService {
     const composition: Record<string, number> = {};
 
     for (const asset of assets) {
-      // Get latest price from price history or use average price as fallback
-      const latestPrice = await this.getLatestPrice(asset.ticker) || asset.averagePrice;
-      const assetValue = asset.quantity * latestPrice;
-      const assetCost = asset.quantity * asset.averagePrice;
+      // Calculate quantity and average price from transactions
+      const { quantity, averagePrice } = await this.calculateAssetMetrics(asset.id);
+      
+      // Get latest price from Price table
+      const latestPrice = await this.getLatestPrice(asset.id);
+      const currentPrice = latestPrice || averagePrice || 0;
+      
+      const assetValue = quantity * currentPrice;
+      const assetCost = quantity * (averagePrice || 0);
 
       totalValue += assetValue;
       totalCost += assetCost;
 
-      // Group by category
-      if (!composition[asset.category]) {
-        composition[asset.category] = 0;
+      // Group by type
+      if (!composition[asset.type]) {
+        composition[asset.type] = 0;
       }
-      composition[asset.category] += assetValue;
+      composition[asset.type] += assetValue;
     }
 
     const totalProfit = totalValue - totalCost;
     const profitPercent = totalCost > 0 ? (totalProfit / totalCost) * 100 : 0;
 
     // Format composition as array
-    const compositionArray = Object.entries(composition).map(([category, value]) => ({
-      category,
+    const compositionArray = Object.entries(composition).map(([type, value]) => ({
+      type,
       value,
       percentage: totalValue > 0 ? (value / totalValue) * 100 : 0,
     }));
+
+    // Calculate metrics for each asset
+    const assetsWithMetrics = await Promise.all(
+      assets.map(async (asset) => {
+        const { quantity, averagePrice } = await this.calculateAssetMetrics(asset.id);
+        const latestPrice = await this.getLatestPrice(asset.id);
+        const currentPrice = latestPrice || averagePrice || 0;
+        const totalValue = quantity * currentPrice;
+        const totalCost = quantity * (averagePrice || 0);
+        const profit = totalValue - totalCost;
+        const profitPercent = totalCost > 0 ? (profit / totalCost) * 100 : 0;
+
+        return {
+          ...asset,
+          quantity,
+          averagePrice,
+          currentPrice,
+          totalValue,
+          totalCost,
+          profit,
+          profitPercent,
+        };
+      })
+    );
 
     return {
       totalValue,
@@ -59,26 +88,55 @@ export class PortfolioService {
       totalProfit,
       profitPercent,
       composition: compositionArray,
-      assets: assets.map((asset) => ({
-        ...asset,
-        currentPrice: this.getLatestPrice(asset.ticker) || asset.averagePrice,
-      })),
+      assets: assetsWithMetrics,
     };
   }
 
-  private async getLatestPrice(ticker: string): Promise<number | null> {
-    const latestPrice = await this.prisma.priceHistory.findFirst({
-      where: { ticker: ticker.toUpperCase() },
+  private async calculateAssetMetrics(assetId: string): Promise<{ quantity: number; averagePrice: number }> {
+    const transactions = await this.prisma.transaction.findMany({
+      where: { assetId },
+      orderBy: { date: 'asc' },
+    });
+
+    let quantity = 0;
+    let totalCost = 0;
+
+    for (const transaction of transactions) {
+      if (transaction.type === 'BUY') {
+        const cost = transaction.quantity * transaction.price + (transaction.fees || 0);
+        totalCost += cost;
+        quantity += transaction.quantity;
+      } else if (transaction.type === 'SELL') {
+        // For SELL, reduce quantity but maintain average price (FIFO-like)
+        quantity -= transaction.quantity;
+        // Adjust total cost proportionally
+        if (quantity > 0) {
+          const avgPrice = totalCost / (quantity + transaction.quantity);
+          totalCost = quantity * avgPrice;
+        } else {
+          totalCost = 0;
+        }
+      }
+    }
+
+    const averagePrice = quantity > 0 ? totalCost / quantity : 0;
+
+    return { quantity, averagePrice };
+  }
+
+  private async getLatestPrice(assetId: string): Promise<number | null> {
+    const latestPrice = await this.prisma.price.findFirst({
+      where: { assetId },
       orderBy: { date: 'desc' },
     });
 
-    return latestPrice ? latestPrice.price : null;
+    return latestPrice ? latestPrice.close : null;
   }
 
   async compareWithIndex(userId: string, index: string = 'SPX') {
     const portfolio = await this.getPortfolio(userId);
     
-    // Get portfolio historical data (simplified - using current value as baseline)
+    // Get portfolio historical data
     const portfolioHistory = await this.getPortfolioHistory(userId);
     
     // Get index historical data (mock data for now - in production, fetch from external API)
@@ -92,10 +150,11 @@ export class PortfolioService {
   }
 
   private async getPortfolioHistory(userId: string) {
-    // Simplified: return last 30 days of portfolio value
-    // In production, calculate from transactions and price history
     const assets = await this.prisma.asset.findMany({
       where: { userId },
+      include: {
+        transactions: true,
+      },
     });
 
     const history = [];
@@ -107,17 +166,30 @@ export class PortfolioService {
       
       let value = 0;
       for (const asset of assets) {
-        const priceHistory = await this.prisma.priceHistory.findFirst({
+        // Get price for this date
+        const priceRecord = await this.prisma.price.findFirst({
           where: {
-            ticker: asset.ticker,
+            assetId: asset.id,
             date: {
               lte: date,
             },
           },
           orderBy: { date: 'desc' },
         });
-        const price = priceHistory?.price || asset.averagePrice;
-        value += asset.quantity * price;
+
+        // Calculate quantity up to this date
+        const transactionsUpToDate = asset.transactions.filter(t => new Date(t.date) <= date);
+        let quantity = 0;
+        for (const transaction of transactionsUpToDate) {
+          if (transaction.type === 'BUY') {
+            quantity += transaction.quantity;
+          } else if (transaction.type === 'SELL') {
+            quantity -= transaction.quantity;
+          }
+        }
+
+        const price = priceRecord?.close || 0;
+        value += quantity * price;
       }
       
       history.push({
@@ -172,4 +244,3 @@ export class PortfolioService {
     };
   }
 }
-

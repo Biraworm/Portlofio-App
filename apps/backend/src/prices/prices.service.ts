@@ -19,53 +19,44 @@ export class PricesService {
 
     for (const asset of assets) {
       // In production, fetch real prices from external API
-      // For now, we'll use a mock price based on average price
-      const assetData = await this.prisma.asset.findFirst({
-        where: { ticker: asset.ticker },
-        orderBy: { updatedAt: 'desc' },
+      // For now, we'll use a mock price
+      const mockPrice = 100 * (1 + (Math.random() - 0.5) * 0.1); // Mock price around 100
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      // Check if price already exists for today
+      const existingPrice = await this.prisma.price.findFirst({
+        where: {
+          assetId: asset.id,
+          date: {
+            gte: today,
+            lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
+          },
+        },
       });
 
-      if (assetData) {
-        // Mock price: use average price with some random variation
-        const mockPrice = assetData.averagePrice * (1 + (Math.random() - 0.5) * 0.1);
-        
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        // Check if price already exists for today
-        const existingPrice = await this.prisma.priceHistory.findFirst({
-          where: {
+      let priceRecord;
+      if (existingPrice) {
+        priceRecord = await this.prisma.price.update({
+          where: { id: existingPrice.id },
+          data: { close: mockPrice },
+        });
+      } else {
+        priceRecord = await this.prisma.price.create({
+          data: {
             assetId: asset.id,
-            date: {
-              gte: today,
-              lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
-            },
+            close: mockPrice,
+            date: today,
           },
         });
-
-        let priceHistory;
-        if (existingPrice) {
-          priceHistory = await this.prisma.priceHistory.update({
-            where: { id: existingPrice.id },
-            data: { price: mockPrice },
-          });
-        } else {
-          priceHistory = await this.prisma.priceHistory.create({
-            data: {
-              assetId: asset.id,
-              ticker: asset.ticker,
-              price: mockPrice,
-              date: today,
-            },
-          });
-        }
-
-        syncedPrices.push({
-          ticker: asset.ticker,
-          price: priceHistory.price,
-          date: priceHistory.date,
-        });
       }
+
+      syncedPrices.push({
+        ticker: asset.ticker,
+        price: priceRecord.close,
+        date: priceRecord.date,
+      });
     }
 
     return {
@@ -78,9 +69,18 @@ export class PricesService {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
-    return this.prisma.priceHistory.findMany({
+    // Find asset by ticker
+    const asset = await this.prisma.asset.findFirst({
+      where: { ticker: ticker.toUpperCase() },
+    });
+
+    if (!asset) {
+      return [];
+    }
+
+    return this.prisma.price.findMany({
       where: {
-        ticker: ticker.toUpperCase(),
+        assetId: asset.id,
         date: {
           gte: startDate,
         },
@@ -91,4 +91,3 @@ export class PricesService {
     });
   }
 }
-

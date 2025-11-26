@@ -7,7 +7,7 @@ export class AssetsService {
   constructor(private prisma: PrismaService) {}
 
   async create(userId: string, createAssetDto: CreateAssetDto) {
-    const { ticker, category, quantity = 0, averagePrice = 0 } = createAssetDto;
+    const { ticker, name, type, currency } = createAssetDto;
 
     const existingAsset = await this.prisma.asset.findUnique({
       where: {
@@ -26,9 +26,9 @@ export class AssetsService {
       data: {
         userId,
         ticker: ticker.toUpperCase(),
-        category,
-        quantity,
-        averagePrice,
+        name,
+        type,
+        currency,
       },
     });
   }
@@ -96,4 +96,3 @@ export class AssetsService {
     });
   }
 }
-

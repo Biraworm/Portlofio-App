@@ -40,7 +40,8 @@ export class DividendsService {
         asset: {
           select: {
             ticker: true,
-            category: true,
+            name: true,
+            type: true,
           },
         },
       },

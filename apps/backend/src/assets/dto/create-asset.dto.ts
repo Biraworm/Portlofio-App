@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsNumber, Min } from 'class-validator';
+import { IsString, IsNotEmpty } from 'class-validator';
 
 export class CreateAssetDto {
   @IsString()
@@ -7,16 +7,13 @@ export class CreateAssetDto {
 
   @IsString()
   @IsNotEmpty()
-  category: string;
+  name: string;
 
-  @IsNumber()
-  @Min(0)
-  @IsOptional()
-  quantity?: number;
+  @IsString()
+  @IsNotEmpty()
+  type: string; // e.g. "STOCK","FII","CRYPTO","ETF","REIT"
 
-  @IsNumber()
-  @Min(0)
-  @IsOptional()
-  averagePrice?: number;
+  @IsString()
+  @IsNotEmpty()
+  currency: string; // USD, BRL, CAD...
 }
-

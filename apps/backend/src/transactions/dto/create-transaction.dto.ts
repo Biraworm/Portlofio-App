@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber, Min, IsDateString } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, Min, IsDateString, IsOptional } from 'class-validator';
 
 export class CreateTransactionDto {
   @IsString()
@@ -17,8 +17,12 @@ export class CreateTransactionDto {
   @Min(0.01)
   price: number;
 
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  fees?: number;
+
   @IsDateString()
   @IsNotEmpty()
   date: string;
 }
-

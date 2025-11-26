@@ -7,10 +7,10 @@ export class TransactionsService {
   constructor(private prisma: PrismaService) {}
 
   async create(userId: string, createTransactionDto: CreateTransactionDto) {
-    const { ticker, type, quantity, price, date } = createTransactionDto;
+    const { ticker, type, quantity, price, fees = 0, date } = createTransactionDto;
 
-    // Find or create asset
-    let asset = await this.prisma.asset.findUnique({
+    // Find asset - must exist
+    const asset = await this.prisma.asset.findUnique({
       where: {
         userId_ticker: {
           userId,
@@ -20,58 +20,49 @@ export class TransactionsService {
     });
 
     if (!asset) {
-      // Create asset if it doesn't exist
-      asset = await this.prisma.asset.create({
-        data: {
-          userId,
-          ticker: ticker.toUpperCase(),
-          category: 'STOCK', // Default category
-          quantity: 0,
-          averagePrice: 0,
-        },
-      });
+      throw new NotFoundException('Asset not found. Please create the asset first.');
     }
 
-    // Calculate new average price and quantity
-    let newQuantity = asset.quantity;
-    let newAveragePrice = asset.averagePrice;
-
-    if (type === 'BUY') {
-      const totalValue = asset.quantity * asset.averagePrice + quantity * price;
-      newQuantity = asset.quantity + quantity;
-      newAveragePrice = newQuantity > 0 ? totalValue / newQuantity : price;
-    } else if (type === 'SELL') {
-      if (asset.quantity < quantity) {
+    // Validate SELL transactions - check if user has enough quantity
+    if (type === 'SELL') {
+      const currentQuantity = await this.calculateCurrentQuantity(asset.id);
+      if (currentQuantity < quantity) {
         throw new BadRequestException('Insufficient quantity to sell');
       }
-      newQuantity = asset.quantity - quantity;
-      newAveragePrice = asset.averagePrice; // Average price doesn't change on sell
-    } else {
+    } else if (type !== 'BUY') {
       throw new BadRequestException('Transaction type must be BUY or SELL');
     }
 
     // Create transaction
-    const transaction = await this.prisma.transaction.create({
+    return this.prisma.transaction.create({
       data: {
         userId,
         assetId: asset.id,
         type,
         quantity,
         price,
+        fees,
         date: new Date(date),
       },
     });
+  }
 
-    // Update asset
-    await this.prisma.asset.update({
-      where: { id: asset.id },
-      data: {
-        quantity: newQuantity,
-        averagePrice: newAveragePrice,
-      },
+  private async calculateCurrentQuantity(assetId: string): Promise<number> {
+    const transactions = await this.prisma.transaction.findMany({
+      where: { assetId },
+      orderBy: { date: 'asc' },
     });
 
-    return transaction;
+    let quantity = 0;
+    for (const transaction of transactions) {
+      if (transaction.type === 'BUY') {
+        quantity += transaction.quantity;
+      } else if (transaction.type === 'SELL') {
+        quantity -= transaction.quantity;
+      }
+    }
+
+    return quantity;
   }
 
   async findAll(userId: string) {
@@ -81,7 +72,8 @@ export class TransactionsService {
         asset: {
           select: {
             ticker: true,
-            category: true,
+            name: true,
+            type: true,
           },
         },
       },
@@ -109,4 +101,3 @@ export class TransactionsService {
     return transaction;
   }
 }
-
