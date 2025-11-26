@@ -22,7 +22,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "migrate:dev": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "rls:enable": "ts-node prisma/enable-rls.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.0",
