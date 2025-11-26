@@ -10,8 +10,8 @@ async function bootstrap() {
     credentials: true,
   });
   
-  await app.listen(3001);
-  console.log('Backend running on http://localhost:3001');
+  await app.listen(4000);
+  console.log('Backend running on http://localhost:4000');
 }
 bootstrap();
 
