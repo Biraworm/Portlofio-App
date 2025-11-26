@@ -12,7 +12,11 @@ export class AppController {
 
   @Get('health')
   getHealth() {
-    return { status: 'ok', message: 'Backend is running' };
+    return { 
+      status: 'ok', 
+      message: 'Backend is running',
+      timestamp: new Date().toISOString(),
+    };
   }
 }
 

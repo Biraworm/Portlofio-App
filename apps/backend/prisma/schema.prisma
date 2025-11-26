@@ -10,12 +10,82 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Example model - you can modify or remove this
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String        @id @default(cuid())
+  email        String        @unique
+  password     String
+  name         String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  assets       Asset[]
+  transactions Transaction[]
+  dividends    Dividend[]
 }
 
+model Asset {
+  id            String         @id @default(cuid())
+  userId        String
+  ticker        String
+  category      String         // e.g., "STOCK", "ETF", "FII", "BOND"
+  quantity      Float          @default(0)
+  averagePrice  Float          @default(0)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions  Transaction[]
+  dividends     Dividend[]
+  priceHistory  PriceHistory[]
+
+  @@unique([userId, ticker])
+  @@index([userId])
+  @@index([ticker])
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  userId    String
+  assetId   String
+  type      String   // "BUY" or "SELL"
+  quantity  Float
+  price     Float
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  asset     Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([assetId])
+  @@index([date])
+}
+
+model Dividend {
+  id        String   @id @default(cuid())
+  userId    String
+  assetId   String
+  amount    Float
+  type      String   // "DIVIDEND", "JCP", "RENDIMENTO"
+  date      DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  asset     Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([assetId])
+  @@index([date])
+}
+
+model PriceHistory {
+  id        String   @id @default(cuid())
+  assetId   String
+  ticker    String
+  price     Float
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  asset     Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([ticker])
+  @@index([date])
+  @@index([assetId, date])
+}
