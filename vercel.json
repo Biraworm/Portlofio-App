@@ -1,7 +1,6 @@
 {
-  "buildCommand": "cd apps/frontend && npm install --legacy-peer-deps && npm run build",
-  "outputDirectory": "apps/frontend/.next",
-  "installCommand": "npm install",
-  "framework": null,
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./apps/frontend"
+  "buildCommand": "bash vercel-build.sh",
+  "outputDirectory": ".next",
+  "installCommand": "echo 'Install handled in build script'",
+  "framework": "nextjs"
 }
