@@ -15,8 +15,10 @@
     "install:all": "npm install && npm install --workspace=apps/frontend && npm install --workspace=apps/backend",
     "vercel-build": "cd apps/frontend && npm install --legacy-peer-deps && npm run build"
   },
+  "dependencies": {
+    "next": "14.2.5"
+  },
   "devDependencies": {
     "concurrently": "^8.2.2"
   }
 }
-
