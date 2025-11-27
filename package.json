@@ -10,6 +10,7 @@
     "dev:frontend": "npm run dev --workspace=apps/frontend",
     "dev:backend": "npm run dev --workspace=apps/backend",
     "start": "./scripts/setup-and-start.sh",
+    "start:simple": "node scripts/check-and-start-backend.js && npm run dev --workspace=apps/frontend",
     "stop": "./scripts/stop.sh",
     "build": "npm run build --workspace=apps/frontend && npm run build --workspace=apps/backend",
     "build:frontend": "npm run build --workspace=apps/frontend",
