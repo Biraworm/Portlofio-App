@@ -6,13 +6,19 @@ echo "Current directory: $(pwd)"
 echo "Listing contents:"
 ls -la
 
-# Navigate to frontend directory
-if [ -d "apps/frontend" ]; then
-  echo "✓ Found apps/frontend directory"
+# Check if we're already in the frontend directory (Root Directory is set to apps/frontend)
+if [ -f "package.json" ] && [ -f "next.config.js" ]; then
+  echo "✓ Already in frontend directory (Root Directory is set correctly)"
+  FRONTEND_DIR="."
+# Check if we need to navigate to apps/frontend
+elif [ -d "apps/frontend" ]; then
+  echo "✓ Found apps/frontend directory, navigating..."
   cd apps/frontend
+  FRONTEND_DIR="apps/frontend"
 elif [ -d "frontend" ]; then
-  echo "✓ Found frontend directory"
+  echo "✓ Found frontend directory, navigating..."
   cd frontend
+  FRONTEND_DIR="frontend"
 else
   echo "✗ ERROR: Could not find frontend directory"
   echo "Available directories:"
@@ -20,7 +26,7 @@ else
   exit 1
 fi
 
-echo "Current directory after cd: $(pwd)"
+echo "Current directory after navigation: $(pwd)"
 echo "Checking for package.json:"
 if [ -f "package.json" ]; then
   echo "✓ package.json found"
