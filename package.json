@@ -12,7 +12,8 @@
     "build": "npm run build --workspace=apps/frontend && npm run build --workspace=apps/backend",
     "build:frontend": "npm run build --workspace=apps/frontend",
     "build:backend": "npm run build --workspace=apps/backend",
-    "install:all": "npm install && npm install --workspace=apps/frontend && npm install --workspace=apps/backend"
+    "install:all": "npm install && npm install --workspace=apps/frontend && npm install --workspace=apps/backend",
+    "vercel-build": "cd apps/frontend && npm install --legacy-peer-deps && npm run build"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

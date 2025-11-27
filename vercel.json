@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "apps/frontend/.next",
+  "installCommand": "echo 'Skipping install - handled in build script'",
   "framework": "nextjs"
 }
