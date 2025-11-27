@@ -50,8 +50,8 @@ export default function LoginPage() {
       
       let errorMessage = "Falha ao fazer login. Verifique suas credenciais."
       
-      if (error.name === 'NetworkError' || error.message?.includes('conectar')) {
-        errorMessage = "Não foi possível conectar ao servidor. Verifique se o backend está rodando em http://localhost:4000"
+      if (error.name === 'NetworkError' || error.name === 'BackendNotRunning' || error.message?.includes('conectar') || error.message?.includes('Backend não está rodando')) {
+        errorMessage = error.message || "Não foi possível conectar ao servidor. Verifique se o backend está rodando em http://localhost:4000"
       } else if (error.response?.data?.message) {
         errorMessage = error.response.data.message
       } else if (error.message) {
@@ -101,8 +101,8 @@ export default function LoginPage() {
       
       let errorMessage = "Falha ao criar conta. Tente novamente."
       
-      if (error.name === 'NetworkError' || error.message?.includes('conectar')) {
-        errorMessage = "Não foi possível conectar ao servidor. Verifique se o backend está rodando em http://localhost:4000"
+      if (error.name === 'NetworkError' || error.name === 'BackendNotRunning' || error.message?.includes('conectar') || error.message?.includes('Backend não está rodando')) {
+        errorMessage = error.message || "Não foi possível conectar ao servidor. Verifique se o backend está rodando em http://localhost:4000"
       } else if (error.response?.data?.message) {
         errorMessage = error.response.data.message
       } else if (error.message) {
