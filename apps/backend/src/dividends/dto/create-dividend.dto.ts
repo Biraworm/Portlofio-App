@@ -9,10 +9,6 @@ export class CreateDividendDto {
   @Min(0.01)
   amount: number;
 
-  @IsString()
-  @IsNotEmpty()
-  type: string; // "DIVIDEND", "JCP", "RENDIMENTO"
-
   @IsDateString()
   @IsNotEmpty()
   date: string;

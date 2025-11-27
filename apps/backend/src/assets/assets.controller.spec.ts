@@ -55,9 +55,9 @@ describe('AssetsController', () => {
     it('should create an asset', async () => {
       const createAssetDto = {
         ticker: 'AAPL',
-        category: 'STOCK',
-        quantity: 10,
-        averagePrice: 150.0,
+        name: 'Apple Inc.',
+        type: 'STOCK',
+        currency: 'USD',
       };
       const user = { userId: 'user123' };
       const expectedAsset = {
@@ -82,16 +82,16 @@ describe('AssetsController', () => {
         {
           id: 'asset1',
           ticker: 'AAPL',
-          category: 'STOCK',
-          quantity: 10,
-          averagePrice: 150.0,
+          name: 'Apple Inc.',
+          type: 'STOCK',
+          currency: 'USD',
         },
         {
           id: 'asset2',
           ticker: 'GOOGL',
-          category: 'STOCK',
-          quantity: 5,
-          averagePrice: 2500.0,
+          name: 'Alphabet Inc.',
+          type: 'STOCK',
+          currency: 'USD',
         },
       ];
 
@@ -111,9 +111,9 @@ describe('AssetsController', () => {
       const expectedAsset = {
         id: assetId,
         ticker: 'AAPL',
-        category: 'STOCK',
-        quantity: 10,
-        averagePrice: 150.0,
+        name: 'Apple Inc.',
+        type: 'STOCK',
+        currency: 'USD',
       };
 
       mockAssetsService.findOne.mockResolvedValue(expectedAsset);

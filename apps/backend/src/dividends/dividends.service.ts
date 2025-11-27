@@ -7,7 +7,7 @@ export class DividendsService {
   constructor(private prisma: PrismaService) {}
 
   async create(userId: string, createDividendDto: CreateDividendDto) {
-    const { ticker, amount, type, date } = createDividendDto;
+    const { ticker, amount, date } = createDividendDto;
 
     const asset = await this.prisma.asset.findUnique({
       where: {
@@ -27,7 +27,6 @@ export class DividendsService {
         userId,
         assetId: asset.id,
         amount,
-        type,
         date: new Date(date),
       },
     });
