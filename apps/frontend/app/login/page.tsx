@@ -22,7 +22,7 @@ export default function LoginPage() {
     e.preventDefault()
     
     if (!email || !password) {
-      toast.error("Please fill in all fields")
+      toast.error("Por favor, preencha todos os campos")
       return
     }
 
@@ -39,15 +39,25 @@ export default function LoginPage() {
         localStorage.setItem('auth_token', response.data.accessToken)
         localStorage.setItem('user', JSON.stringify(response.data.user))
         
-        toast.success("Logged in successfully!")
+        toast.success("Login realizado com sucesso!")
         router.push("/")
         router.refresh()
       } else {
-        toast.error("No token received. Please try again.")
+        toast.error("Token não recebido. Tente novamente.")
       }
     } catch (error: any) {
       console.error("Login error:", error)
-      const errorMessage = error.response?.data?.message || error.message || "Failed to login. Please check your credentials."
+      
+      let errorMessage = "Falha ao fazer login. Verifique suas credenciais."
+      
+      if (error.name === 'NetworkError' || error.message?.includes('conectar')) {
+        errorMessage = "Não foi possível conectar ao servidor. Verifique se o backend está rodando em http://localhost:4000"
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message
+      } else if (error.message) {
+        errorMessage = error.message
+      }
+      
       toast.error(errorMessage)
     } finally {
       setIsLoading(false)
@@ -58,12 +68,12 @@ export default function LoginPage() {
     e.preventDefault()
     
     if (!email || !password) {
-      toast.error("Please fill in all fields")
+      toast.error("Por favor, preencha todos os campos")
       return
     }
 
     if (password.length < 6) {
-      toast.error("Password must be at least 6 characters")
+      toast.error("A senha deve ter pelo menos 6 caracteres")
       return
     }
 
@@ -80,15 +90,25 @@ export default function LoginPage() {
         localStorage.setItem('auth_token', response.data.accessToken)
         localStorage.setItem('user', JSON.stringify(response.data.user))
         
-        toast.success("Account created successfully!")
+        toast.success("Conta criada com sucesso!")
         router.push("/")
         router.refresh()
       } else {
-        toast.error("Account created but no token received. Please login.")
+        toast.error("Conta criada mas nenhum token recebido. Faça login.")
       }
     } catch (error: any) {
       console.error("Sign up error:", error)
-      const errorMessage = error.response?.data?.message || error.message || "Failed to create account. Please try again."
+      
+      let errorMessage = "Falha ao criar conta. Tente novamente."
+      
+      if (error.name === 'NetworkError' || error.message?.includes('conectar')) {
+        errorMessage = "Não foi possível conectar ao servidor. Verifique se o backend está rodando em http://localhost:4000"
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message
+      } else if (error.message) {
+        errorMessage = error.message
+      }
+      
       toast.error(errorMessage)
     } finally {
       setIsLoading(false)
@@ -101,7 +121,7 @@ export default function LoginPage() {
         <CardHeader>
           <CardTitle className="text-2xl">Portfolio App</CardTitle>
           <CardDescription>
-            {isSignUp ? "Create a new account" : "Sign in to your account"}
+            {isSignUp ? "Criar uma nova conta" : "Entre na sua conta"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -114,7 +134,7 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -123,11 +143,11 @@ export default function LoginPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Senha</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Digite sua senha"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -142,7 +162,7 @@ export default function LoginPage() {
                 disabled={isLoading}
                 className="flex-1"
               >
-                {isLoading ? "Loading..." : isSignUp ? "Sign Up" : "Login"}
+                {isLoading ? "Carregando..." : isSignUp ? "Criar Conta" : "Entrar"}
               </Button>
               <Button
                 type="button"
@@ -155,9 +175,14 @@ export default function LoginPage() {
                 disabled={isLoading}
                 className="flex-1"
               >
-                {isSignUp ? "Back to Login" : "Sign Up"}
+                {isSignUp ? "Voltar ao Login" : "Criar Conta"}
               </Button>
             </div>
+            {isSignUp && (
+              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                Ou use o usuário de teste: test@example.com / test123456
+              </p>
+            )}
           </form>
         </CardContent>
       </Card>
