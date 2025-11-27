@@ -1,5 +1,4 @@
 apps/backend
-node_modules
 *.log
 .env
 .env.local
@@ -9,3 +8,4 @@ README.md
 DEPLOY-VERCEL.md
 VERCEL-*.md
 package-validation.md
+vercel-build.sh

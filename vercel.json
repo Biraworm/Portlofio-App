@@ -1,6 +1,6 @@
 {
-  "buildCommand": "bash vercel-build.sh",
+  "buildCommand": "npm install --legacy-peer-deps && npm run build",
   "outputDirectory": ".next",
-  "installCommand": "echo 'Install handled in build script'",
+  "installCommand": "npm install --legacy-peer-deps",
   "framework": "nextjs"
 }
