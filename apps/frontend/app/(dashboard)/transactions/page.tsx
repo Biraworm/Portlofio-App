@@ -1,5 +1,7 @@
 "use client"
 
+export const dynamic = 'force-dynamic'
+
 import { useQuery } from "@tanstack/react-query"
 import { api } from "@/lib/api"
 import { TransactionsForm } from "@/components/transactions/transactions-form"
