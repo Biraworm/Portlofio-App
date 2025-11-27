@@ -114,3 +114,4 @@ Certifique-se de que as políticas RLS estão configuradas corretamente para per
 
 4. **Refresh de Token**: O Supabase client renova automaticamente o token quando necessário.
 
+

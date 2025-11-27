@@ -75,3 +75,4 @@ O Vercel aplica o Root Directory **ANTES** de ler o `vercel.json`. Portanto:
 
 Isso é o comportamento esperado e correto!
 
+

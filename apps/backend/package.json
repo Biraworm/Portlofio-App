@@ -23,7 +23,8 @@
     "prisma:migrate": "prisma migrate dev",
     "migrate:dev": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "rls:enable": "ts-node prisma/enable-rls.ts"
+    "rls:enable": "ts-node prisma/enable-rls.ts",
+    "create:test-user": "prisma generate && ts-node scripts/create-test-user.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.0",

@@ -7,3 +7,4 @@ export class SyncPricesDto {
   tickers: string[];
 }
 
+

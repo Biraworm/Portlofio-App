@@ -63,3 +63,4 @@ Output Directory: .next
 Install Command: (vazio)
 ```
 
+

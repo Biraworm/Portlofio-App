@@ -42,3 +42,4 @@ O `vercel.json` está configurado, mas o Vercel pode ignorá-lo se as configura�
 5. **Adicione Environment Variables**
 6. **Deploy**
 
+

@@ -49,3 +49,4 @@ As páginas agora são renderizadas dinamicamente (`force-dynamic`), então o bu
 2. O Supabase funcionará corretamente
 3. A autenticação funcionará normalmente
 
+

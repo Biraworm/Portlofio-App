@@ -45,3 +45,4 @@ Certifique-se de adicionar estas variáveis em **Settings → Environment Variab
 - Se o Root Directory estiver configurado, o Vercel já estará em `apps/frontend` quando executar o script
 - O script funciona tanto com quanto sem Root Directory configurado
 
+

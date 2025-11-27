@@ -120,3 +120,4 @@ Se você encontrar problemas:
 - [Supabase RLS Documentation](https://supabase.com/docs/guides/database/postgres/row-level-security)
 - [PostgreSQL RLS Documentation](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)
 
+

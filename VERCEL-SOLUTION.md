@@ -43,3 +43,4 @@ Após essas mudanças, o deploy deve funcionar porque:
 - ✅ Build command navega para apps/frontend
 - ✅ Instala e builda corretamente
 
+

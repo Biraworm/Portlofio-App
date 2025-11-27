@@ -4,7 +4,6 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { supabase } from "@/lib/supabase"
 import { MainLayout } from "@/components/layout/main-layout"
 
 export default function DashboardLayout({
@@ -18,18 +17,13 @@ export default function DashboardLayout({
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuth = () => {
       try {
-        // Check for existing session
-        const { data: { session }, error } = await supabase.auth.getSession()
+        // Check for token in localStorage
+        const token = localStorage.getItem('auth_token')
+        const user = localStorage.getItem('user')
         
-        if (error) {
-          console.error("Session error:", error)
-          router.push("/login")
-          return
-        }
-
-        if (session) {
+        if (token && user) {
           setIsAuthenticated(true)
         } else {
           router.push("/login")
@@ -43,27 +37,6 @@ export default function DashboardLayout({
     }
 
     checkAuth()
-
-    // Listen for auth state changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state changed:", event, session ? "has session" : "no session")
-      
-      if (event === 'SIGNED_OUT' || !session) {
-        setIsAuthenticated(false)
-        router.push("/login")
-      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        setIsAuthenticated(true)
-        if (pathname === "/login") {
-          router.push("/")
-        }
-      }
-    })
-
-    return () => {
-      subscription.unsubscribe()
-    }
   }, [router, pathname])
 
   if (isLoading) {

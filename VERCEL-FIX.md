@@ -36,3 +36,4 @@ Após corrigir, o Vercel deve:
 - ✅ Encontrar o diretório: `apps/frontend`
 - ✅ Detectar Next.js corretamente
 
+

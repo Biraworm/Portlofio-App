@@ -75,3 +75,4 @@ Isso garante que:
 - ✅ `buildCommand` apenas executa o build (sem remover dependências)
 - ✅ Todos os módulos serão encontrados corretamente
 
+

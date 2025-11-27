@@ -48,3 +48,4 @@ export function DonutChart({ data, colors = DEFAULT_COLORS }: DonutChartProps) {
   )
 }
 
+

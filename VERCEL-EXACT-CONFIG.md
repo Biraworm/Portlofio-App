@@ -59,3 +59,4 @@ Running "cd apps/frontend && npm install..."
 6. **Adicione Environment Variables**
 7. **Deploy**
 
+

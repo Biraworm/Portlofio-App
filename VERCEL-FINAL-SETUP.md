@@ -46,3 +46,4 @@ Após configurar, verifique nos logs do deploy:
 
 Se ainda houver problemas, **delete o projeto no Vercel** e crie um novo, garantindo que o Root Directory seja `apps/frontend` desde o início.
 
+

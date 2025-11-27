@@ -66,3 +66,4 @@ O Vercel aplica o Root Directory **ANTES** de executar comandos. Portanto:
 
 Isso é o comportamento esperado!
 
+

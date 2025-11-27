@@ -47,3 +47,4 @@ If you still get "No Next.js version detected":
 3. Clear build cache and redeploy
 4. Verify that `apps/frontend/package.json` contains `"next"` in dependencies
 
+

@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabase"
+import { api } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -29,26 +29,26 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const response = await api.post('/auth/login', {
         email: email.trim(),
         password,
       })
 
-      if (error) {
-        console.error("Login error:", error)
-        throw error
-      }
-
-      if (data.session) {
+      if (response.data.accessToken) {
+        // Salvar token no localStorage
+        localStorage.setItem('auth_token', response.data.accessToken)
+        localStorage.setItem('user', JSON.stringify(response.data.user))
+        
         toast.success("Logged in successfully!")
         router.push("/")
         router.refresh()
       } else {
-        toast.error("No session created. Please try again.")
+        toast.error("No token received. Please try again.")
       }
     } catch (error: any) {
       console.error("Login error:", error)
-      toast.error(error.message || "Failed to login. Please check your credentials.")
+      const errorMessage = error.response?.data?.message || error.message || "Failed to login. Please check your credentials."
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }
@@ -70,30 +70,26 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const response = await api.post('/auth/register', {
         email: email.trim(),
         password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-        },
       })
 
-      if (error) {
-        console.error("Sign up error:", error)
-        throw error
-      }
-
-      if (data.user) {
-        toast.success("Account created! Please check your email to verify your account.")
-        // Optionally sign in immediately if email confirmation is disabled
-        if (data.session) {
-          router.push("/")
-          router.refresh()
-        }
+      if (response.data.accessToken) {
+        // Salvar token no localStorage
+        localStorage.setItem('auth_token', response.data.accessToken)
+        localStorage.setItem('user', JSON.stringify(response.data.user))
+        
+        toast.success("Account created successfully!")
+        router.push("/")
+        router.refresh()
+      } else {
+        toast.error("Account created but no token received. Please login.")
       }
     } catch (error: any) {
       console.error("Sign up error:", error)
-      toast.error(error.message || "Failed to create account. Please try again.")
+      const errorMessage = error.response?.data?.message || error.message || "Failed to create account. Please try again."
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }

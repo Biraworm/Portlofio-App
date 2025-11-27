@@ -82,3 +82,4 @@ export function AssetsTable({ assets }: AssetsTableProps) {
   )
 }
 
+

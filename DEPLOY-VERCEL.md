@@ -69,3 +69,4 @@ Se ainda houver problemas:
 2. Limpe o cache do build
 3. Verifique os logs de build no Vercel
 
+

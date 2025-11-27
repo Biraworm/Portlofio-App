@@ -33,3 +33,4 @@ O arquivo `vercel.json` na raiz está configurado, mas o Vercel pode precisar qu
 
 O Root Directory **DEVE** ser: `apps/frontend`
 
+
