@@ -15,27 +15,40 @@ export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [isSignUp, setIsSignUp] = useState(false)
   const router = useRouter()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!email || !password) {
+      toast.error("Please fill in all fields")
+      return
+    }
+
     setIsLoading(true)
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: email.trim(),
         password,
       })
 
-      if (error) throw error
+      if (error) {
+        console.error("Login error:", error)
+        throw error
+      }
 
       if (data.session) {
-        localStorage.setItem("supabase.auth.token", data.session.access_token)
-        toast.success("Logged in successfully")
+        toast.success("Logged in successfully!")
         router.push("/")
+        router.refresh()
+      } else {
+        toast.error("No session created. Please try again.")
       }
     } catch (error: any) {
-      toast.error(error.message || "Failed to login")
+      console.error("Login error:", error)
+      toast.error(error.message || "Failed to login. Please check your credentials.")
     } finally {
       setIsLoading(false)
     }
@@ -43,33 +56,63 @@ export default function LoginPage() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!email || !password) {
+      toast.error("Please fill in all fields")
+      return
+    }
+
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters")
+      return
+    }
+
     setIsLoading(true)
 
     try {
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: email.trim(),
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+        },
       })
 
-      if (error) throw error
+      if (error) {
+        console.error("Sign up error:", error)
+        throw error
+      }
 
-      toast.success("Account created! Please check your email to verify.")
+      if (data.user) {
+        toast.success("Account created! Please check your email to verify your account.")
+        // Optionally sign in immediately if email confirmation is disabled
+        if (data.session) {
+          router.push("/")
+          router.refresh()
+        }
+      }
     } catch (error: any) {
-      toast.error(error.message || "Failed to sign up")
+      console.error("Sign up error:", error)
+      toast.error(error.message || "Failed to create account. Please try again.")
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center p-4 bg-gray-50 dark:bg-gray-900">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Portfolio App</CardTitle>
-          <CardDescription>Sign in to your account or create a new one</CardDescription>
+          <CardTitle className="text-2xl">Portfolio App</CardTitle>
+          <CardDescription>
+            {isSignUp ? "Create a new account" : "Sign in to your account"}
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-4">
+          <form 
+            className="space-y-4"
+            onSubmit={isSignUp ? handleSignUp : handleLogin}
+          >
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -79,6 +122,8 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={isLoading}
+                autoComplete="email"
               />
             </div>
             <div className="space-y-2">
@@ -86,28 +131,35 @@ export default function LoginPage() {
               <Input
                 id="password"
                 type="password"
+                placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={isLoading}
+                autoComplete={isSignUp ? "new-password" : "current-password"}
+                minLength={6}
               />
             </div>
             <div className="flex gap-2">
               <Button
                 type="submit"
-                onClick={handleLogin}
                 disabled={isLoading}
                 className="flex-1"
               >
-                {isLoading ? "Loading..." : "Login"}
+                {isLoading ? "Loading..." : isSignUp ? "Sign Up" : "Login"}
               </Button>
               <Button
                 type="button"
                 variant="outline"
-                onClick={handleSignUp}
+                onClick={() => {
+                  setIsSignUp(!isSignUp)
+                  setEmail("")
+                  setPassword("")
+                }}
                 disabled={isLoading}
                 className="flex-1"
               >
-                Sign Up
+                {isSignUp ? "Back to Login" : "Sign Up"}
               </Button>
             </div>
           </form>
@@ -116,4 +168,3 @@ export default function LoginPage() {
     </div>
   )
 }
-
