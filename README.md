@@ -83,7 +83,11 @@ O arquivo `.env.local` será criado automaticamente em `apps/frontend/.env.local
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:4000
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR-PROJECT.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
 ```
+
+> **Importante:** configure essas mesmas variáveis no painel da Vercel (Project Settings → Environment Variables) para que o build de produção consiga acessar o Supabase.
 
 ## 🚀 Desenvolvimento
 

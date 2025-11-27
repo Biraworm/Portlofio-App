@@ -49,6 +49,24 @@ cd apps/backend
 npm run start:dev
 ```
 
+## ⚙️ Variáveis de Ambiente
+
+Antes de rodar em produção (ou no Vercel), configure:
+
+```bash
+# Frontend (apps/frontend/.env.local ou Vercel ENV)
+NEXT_PUBLIC_API_URL=http://localhost:4000
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR-PROJECT.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+
+# Backend (apps/backend/.env)
+DATABASE_URL=postgresql://postgres:password@host:5432/postgres?sslmode=require
+JWT_SECRET=your-super-secret-key
+FINNHUB_API_KEY=
+```
+
+> Use o arquivo `env.example` como referência e lembre-se de definir essas variáveis também no painel da Vercel (Project Settings → Environment Variables).
+
 ## ❓ Problemas?
 
 Se o backend não iniciar automaticamente:

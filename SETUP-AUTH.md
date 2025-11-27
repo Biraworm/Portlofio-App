@@ -80,8 +80,12 @@ Certifique-se de que o arquivo `.env.local` do frontend está configurado:
 cd apps/frontend
 cat > .env.local << EOF
 NEXT_PUBLIC_API_URL=http://localhost:4000
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR-PROJECT.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
 EOF
 ```
+
+# Em produção (Vercel), adicione as mesmas variáveis no painel de Environment Variables.
 
 ### Passo 6: Testar Login
 

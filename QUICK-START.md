@@ -59,6 +59,8 @@ cd apps/frontend
 # Criar arquivo .env.local
 cat > .env.local << EOF
 NEXT_PUBLIC_API_URL=http://localhost:4000
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR-PROJECT.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
 EOF
 
 # Instalar dependências (se necessário)
