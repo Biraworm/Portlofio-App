@@ -1,6 +1,17 @@
 {
+  "version": 2,
+  "builds": [
+    {
+      "src": "dist/main.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/dist/main.js"
+    }
+  ],
   "buildCommand": "npm run build:vercel:fast",
-  "installCommand": "npm ci --legacy-peer-deps --prefer-offline --no-audit --silent --no-optional --no-fund --no-progress --ignore-scripts",
-  "outputDirectory": "dist",
-  "framework": null
+  "installCommand": "npm ci --legacy-peer-deps --prefer-offline --no-audit --silent --no-optional --no-fund --no-progress --ignore-scripts"
 }
