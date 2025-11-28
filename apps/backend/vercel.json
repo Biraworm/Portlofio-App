@@ -1,0 +1,8 @@
+{
+  "buildCommand": "npm run build:vercel:fast",
+  "installCommand": "npm ci --legacy-peer-deps --prefer-offline --no-audit --silent --no-optional --no-fund --no-progress --ignore-scripts",
+  "outputDirectory": "dist",
+  "framework": null,
+  "ignoreCommand": "git diff HEAD^ HEAD --quiet apps/backend/ -- apps/backend/package.json apps/backend/package-lock.json"
+}
+

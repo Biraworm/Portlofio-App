@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "declaration": true,
+    "declaration": false,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES2021",
-    "sourceMap": true,
+    "sourceMap": false,
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
@@ -16,7 +16,24 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
-  }
+    "noFallthroughCasesInSwitch": false,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipDefaultLibCheck": true
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "test",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/__tests__/**",
+    "**/coverage/**",
+    "scripts/**",
+    "prisma/**/*.ts"
+  ],
+  "include": ["src/**/*"]
 }
 

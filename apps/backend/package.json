@@ -5,8 +5,15 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
-    "build": "nest build",
+    "build": "prisma generate --schema=./prisma/schema.prisma && nest build",
+    "build:vercel": "prisma generate --schema=./prisma/schema.prisma && nest build",
+    "build:vercel:fast": "PRISMA_GENERATE_SKIP_AUTOINSTALL=true prisma generate --schema=./prisma/schema.prisma && NODE_ENV=production nest build",
+    "build:fast": "nest build",
+    "build:ultra": "NODE_ENV=production prisma generate --schema=./prisma/schema.prisma && NODE_ENV=production nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",

@@ -1,0 +1,119 @@
+# Arquivos e diretórios que não precisam ser enviados ao Vercel
+# Otimização ULTRA-AGRESSIVA para reduzir tamanho e tempo de build
+
+# Testes - EXCLUIR TUDO
+test/
+**/*.spec.ts
+**/*.test.ts
+**/__tests__/
+**/__mocks__/
+coverage/
+*.spec.js
+*.test.js
+*.spec.d.ts
+*.test.d.ts
+jest.config.*
+*.e2e-spec.ts
+
+# Desenvolvimento - EXCLUIR TUDO
+.vscode/
+.idea/
+*.log
+*.md
+!README.md
+.prettierrc*
+.eslintrc*
+.editorconfig
+*.code-workspace
+
+# Scripts de desenvolvimento - EXCLUIR TUDO
+scripts/
+*.sh
+*.bat
+*.cmd
+
+# Prisma - APENAS schema.prisma
+prisma/*.ts
+prisma/*.sql
+prisma/*.md
+prisma/README*
+!prisma/schema.prisma
+node_modules/.prisma/
+
+# Documentação - EXCLUIR TUDO
+docs/
+*.md
+!README.md
+OTIMIZACOES*.md
+CHANGELOG*
+LICENSE*
+
+# Configurações locais
+.env*
+!.env.example
+.env.local
+.env.development
+.env.test
+.env.production.local
+
+# Build artifacts antigos - EXCLUIR TUDO
+dist/
+build/
+*.tsbuildinfo
+.tsbuildinfo
+*.map
+*.d.ts
+
+# Node modules - JÁ IGNORADO, mas explícito
+node_modules/
+.npm/
+.yarn/
+.pnp.*
+
+# Git - EXCLUIR TUDO
+.git/
+.gitignore
+.gitattributes
+.github/
+
+# TypeScript - EXCLUIR arquivos de desenvolvimento
+tsconfig.*.json
+!tsconfig.json
+*.tsbuildinfo
+
+# Outros arquivos desnecessários
+.DS_Store
+*.swp
+*.swo
+*~
+*.tmp
+*.temp
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.vuepress/
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+.vscode-test/
+*.vsix
+*.zip
+*.tar.gz
+*.rar
+
+# Arquivos de IDE
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.settings/
+*.iml
+*.ipr
+*.iws
+
+# Arquivos de sistema
+Thumbs.db
+Desktop.ini
+
